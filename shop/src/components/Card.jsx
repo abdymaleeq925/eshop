@@ -1,41 +1,28 @@
-import React from 'react';
+import React, {useState} from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useStateContext } from '../context/StateContext';
 import { AiOutlineMinus, AiOutlinePlus, AiOutlineShopping, AiOutlineRight } from 'react-icons/ai';
 import { TiDeleteOutline } from 'react-icons/ti';
 import { urlFor } from '../client';
 import { toast } from 'react-hot-toast';
-import getStripe from '../stripe';
+import { runFireworks } from '../utils/data';
+
 
 const Card = () => {
   const { setShowCard, cartItems, totalQuantities, totalPrice, toggleCartItemQuantity, onRemove } = useStateContext();
-
+  const navigate = useNavigate();
   const handleCheckout = async()=> {
     try {
-      const stripe = await getStripe();
-
-      const response = await fetch('http://localhost:5001/api/stripe', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({cartItems})
-      })
-      if (!response.ok) {
-        // Handle non-OK responses (e.g., 500 Internal Server Error)
-        console.error(`Error: ${response.status} - ${response.statusText}`);
-        return;
-      }
-
-      const data = await response.json();
-
-      console.log(data)
-  
-      toast.loading('Redirecting...');
-
-      stripe.redirectToCheckout({ sessionId: data.id });
+      navigate('/');
+      setShowCard(false);
+      runFireworks();
+      toast.success('Your payment has been successfull');
     }
     catch (err) {
       console.error('Error during checkout')
     }
   }
+
   return (
     <div className='card-wrapper'>
       <div className='card-container'>
@@ -53,8 +40,8 @@ const Card = () => {
         }
         <div className='product-container'>
           {cartItems.length >= 1 &&
-            cartItems?.map((product) => (
-              <div className='product'>
+            cartItems?.map((product, index) => (
+              <div className='product' key={index}>
                 {product?.image && <img src={urlFor(product.image[0])} className='cart-product-image' alt=''/>}
                 <div className='item-desc'>
                   <div className='flex top'>

@@ -9,7 +9,6 @@ import FooterBanner from './FooterBanner';
 const Homepage = () => {
   const [bannerData, setBannerData] = useState({});
   const [productData, setProductData] = useState([]);
-  console.log(productData[0])
   useEffect(() => {
     client.fetch(productQuery).then((data) => setProductData(data))
     client.fetch(bannerQuery).then((data) => setBannerData(data[0]))
@@ -30,9 +29,10 @@ const Homepage = () => {
         <p>Speakers of many variation</p>
       </div>
       <div className="products-container">
-        {productData?.map((item) => <Product key={item.id} slug={item.slug} name={item.name} image={item.image} price={item.price}/>)}
+        {productData?.map((item, index) => <Product key={index} slug={item.slug} name={item.name} image={item.image} price={item.price}/>)}
       </div>
       <FooterBanner
+        
         smallText={bannerData?.smallText}
         mediumText={bannerData?.mediumText}
         largeText={bannerData?.largeText}

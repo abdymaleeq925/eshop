@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, createContext } from 'react';
+import React, { useState, useEffect, useContext, createContext, useRef } from 'react';
 import { toast } from 'react-hot-toast';
 
 const Context = createContext();
@@ -11,6 +11,37 @@ export const StateContext = ({ children }) => {
     const [totalQuantities, setTotalQuantities] = useState(0);
     
     let foundProduct;
+
+    const isInitialMount = useRef(true);
+    useEffect(() => {
+        if(isInitialMount.current) {
+
+        const localData = localStorage.getItem('products');
+        console.log('init products', localData)
+        if (localData) {
+            try {
+                const { cartItems, totalPrice, totalQuantities } = JSON.parse(localData);
+                console.log('loading products')
+
+                setCartItems(cartItems || []);
+                setTotalPrice(totalPrice || 0);
+                setTotalQuantities(totalQuantities || 0);
+            } catch (err) {
+                console.log('Err of loading products')
+            }
+        };
+        isInitialMount.current = false
+    } else {
+        console.log('saving products to localStorage');
+        const doc = {
+            cartItems, totalPrice, totalQuantities
+        };
+    
+        localStorage.setItem('products', JSON.stringify(doc));
+    }
+
+     }, [cartItems, totalPrice, totalQuantities]);
+
 
     const incQty = () => {
         setQuantity((prevQty) => prevQty+1)
@@ -43,7 +74,7 @@ export const StateContext = ({ children }) => {
     }
     const toggleCartItemQuantity = (id, value) => {
         const foundProduct = cartItems.find((item) => item._id === id);
-        const newCartItems = cartItems.filter((item) => item._id!==id);
+        const newCartItems = cartItems.filter((item) => item._id !== id);
 
         if(value === 'inc') {
             setCartItems([...newCartItems, {...foundProduct, quantity: foundProduct.quantity + 1}]);

@@ -17,6 +17,7 @@ const ProductDetail = () => {
   const queryLike = `*[_type == "product"]`;
 
   const { quantity, incQty, decQty, onAdd, setShowCard } = useStateContext()
+  const { cartItems, totalQuantities, totalPrice } = useStateContext();
 
   useEffect(() => {
     client.fetch(query).then((data) => {
@@ -33,7 +34,6 @@ const ProductDetail = () => {
   }
 
   const { image, name, details, price, _id } = productDetail;
-  console.log(productDetail)
 
   return (
     <div>

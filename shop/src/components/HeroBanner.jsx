@@ -3,7 +3,6 @@ import { urlFor } from '../client';
 import { Link } from 'react-router-dom';
 
 const HeroBanner = (props) => {
-  console.log(props.slug);
   return (
     <div className='hero-banner-container'>
       <div>
